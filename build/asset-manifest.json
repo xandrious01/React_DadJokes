@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/React_DadJokes/static/css/main.2a31353b.css",
+    "main.js": "/React_DadJokes/static/js/main.f56889e2.js",
+    "index.html": "/React_DadJokes/index.html",
+    "main.2a31353b.css.map": "/React_DadJokes/static/css/main.2a31353b.css.map",
+    "main.f56889e2.js.map": "/React_DadJokes/static/js/main.f56889e2.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2a31353b.css",
+    "static/js/main.f56889e2.js"
+  ]
+}

@@ -17,23 +17,38 @@ const JokeList = ({ numJokes = 5 }) => {
   }
 
   async function generateNewJokes() {
-    setJokes(() => jokes.filter(i => i.isLocked));
+    setJokes(jokes => jokes.filter(i => i.isLocked));
+    console.log(jokes.length, numJokes)
     localStorage.clear();
     setIsLoading(true);
     let seenJokes = new Set();
     try {
-      while (jokes.length < numJokes) {
+      let loopCount = 0; 
+
+        while (loopCount < Math.min(5, numJokes)) { 
+
+       
+      
+      // while (jokes.length < numJokes) {
         let newJoke = await requestJoke();
         if (!seenJokes.has(newJoke.id)) {
           seenJokes.add(newJoke.id);
-          setJokes(() => {
-            jokes.push({ ...newJoke, votes: 0, isLocked: false });
-            return jokes;
+          
+          setJokes(jokes => {
+            const updatedJokes = [...jokes, { ...newJoke, votes: 0, isLocked: false }];
+
+            // jokes.push({ ...newJoke, votes: 0, isLocked: false });
+            localStorage.setItem("jokes", JSON.stringify(jokes));
+            return updatedJokes;
           });
-          localStorage.setItem("jokes", JSON.stringify(jokes))
+
         } else {
           console.log("duplicate joke received")
         }
+        if (seenJokes.size === 5) {
+          break;
+        }
+        loopCount++;
       }
       setIsLoading(false);
     } catch (err) {
@@ -41,6 +56,7 @@ const JokeList = ({ numJokes = 5 }) => {
       console.log("Error loading page.")
     }
   }
+  console.log(jokes)
 
   useEffect(() => {
     const storedJokes = localStorage.getItem("jokes");
@@ -50,7 +66,8 @@ const JokeList = ({ numJokes = 5 }) => {
         return JSON.parse(storedJokes)
       })
     } else {
-      generateNewJokes();
+
+      generateNewJokes().then(() => setIsLoading(false))
     }
   }, [])
 
@@ -70,11 +87,11 @@ const JokeList = ({ numJokes = 5 }) => {
 
   const lock = (jokeId) => {
     const updatedJokes = jokes.map(i => {
-      if(i.id === jokeId){
+      if (i.id === jokeId) {
         i.isLocked === false ? i.isLocked = true : i.isLocked = false;
-        return {...i}
+        return { ...i }
       } else {
-        return {...i};
+        return { ...i };
       }
     })
     setJokes(updatedJokes)
@@ -122,7 +139,9 @@ const JokeList = ({ numJokes = 5 }) => {
   return (
     <div className="JokeList">
       <button className='JokeList-getmore'
-        onClick={generateNewJokes}>
+        onClick={() =>
+          generateNewJokes()
+        }>
         Get New jokes
       </button>
       <h1>Have Some Dad Jokes!</h1>
